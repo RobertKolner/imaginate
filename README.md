@@ -11,7 +11,7 @@ Usage
 
 3. Use url to make queries in following format:
 
-     http://127.0.0.1:8000/image/<url>
+     http://127.0.0.1:8000/image/[url]
 
    For example:
 
@@ -20,5 +20,5 @@ Usage
 4. You can use following parameters in the url:
 
    * no_cache=1 -- forces the app to rebuild the image
-   * width=<int> -- forces given webview size. Note that this does not guarantee that the resulting image will be this wide.
-   * height=<int> -- same as above, but with height.
+   * width=[int] -- forces given webview size. Note that this does not guarantee that the resulting image will be this wide.
+   * height=[int] -- same as above, but with height.
