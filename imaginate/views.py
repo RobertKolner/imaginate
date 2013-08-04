@@ -13,8 +13,10 @@ class IndexView(TemplateView):
     
     def get(self, request, url):
         no_cache = request.GET.get("no_cache") == "1"
+        image_width = request.GET.get("width") or 0
+        image_height = request.GET.get("height") or 0
 
-        image = self._get_image(url, no_cache)
+        image = self._get_image(url, no_cache=no_cache, width=int(image_width), height=int(image_height))
 
         try:
             with open(image, "rb") as f:
@@ -44,9 +46,7 @@ class IndexView(TemplateView):
 
         return "{}.png".format(path)
     
-    def _create_image(self, url, output_path):
-        width = 480
-        height = 240
+    def _create_image(self, url, output_path, width, height):
         script = \
     """ 
     var page = require("webpage").create();
@@ -55,8 +55,8 @@ class IndexView(TemplateView):
     var targetHeight = {height};
     
     page.viewportSize = {{
-        width: 1366,
-        height: 768
+        width: targetWidth,
+        height: targetHeight
     }};
 
     page.open(url, function(status) {{
@@ -84,14 +84,14 @@ class IndexView(TemplateView):
     
         return subprocess.check_call([self.phantomjs_path, tmp_script_path])
     
-    def _get_image(self, url, no_cache=False):
+    def _get_image(self, url, width=0, height=0, no_cache=False):
         cachedir = self._get_cachedir()
         filename = self._get_filename(url)
         path = cachedir + filename
     
     
         if no_cache or not os.path.exists(path):
-            self._create_image(url, path)
+            self._create_image(url, path, width, height)
     
         return path
 
