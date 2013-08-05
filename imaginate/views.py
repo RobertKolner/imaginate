@@ -16,11 +16,14 @@ class IndexView(TemplateView):
         image_width = request.GET.get("width") or 0
         image_height = request.GET.get("height") or 0
 
-        image = self._get_image(url, width=int(image_width), height=int(image_height))
+        image_path = self._get_image(url, width=int(image_width), height=int(image_height))
 
         try:
-            with open(image, "rb") as f:
-                return HttpResponse(f.read(), mimetype="image/png")
+            with open(image_path, "rb") as f:
+                data = f.read()
+
+            os.remove(image_path)
+            return HttpResponse(data, mimetype="image/png")
         except IOError: 
             raise Http404
 
@@ -43,6 +46,8 @@ class IndexView(TemplateView):
         path = parsed.netloc + parsed.path
         if path[-1] == '/':
             path = path[:-1]
+
+        path = path.replace('/', '_')
 
         return "{}.png".format(path)
     
@@ -93,8 +98,11 @@ class IndexView(TemplateView):
         tmp_script = open(tmp_script_path, 'w')
         tmp_script.write(script)
         tmp_script.close()
-    
-        return subprocess.check_call([self.phantomjs_path, tmp_script_path])
+
+        retval = subprocess.check_call([self.phantomjs_path, tmp_script_path])
+
+        os.remove(tmp_script_path)
+        return retval
     
     def _get_image(self, url, width=0, height=0):
         cachedir = self._get_cachedir()
