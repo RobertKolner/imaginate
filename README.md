@@ -9,16 +9,15 @@ Usage
       
 	  python ./manage.py runserver
 
-3. Use url to make queries in following format:
+3. Use url to make queries:
 
-     http://127.0.0.1:8000/image/[url]
+     http://127.0.0.1:8000/image/{url}
 
-   For example:
+   For instance:
 
       http://127.0.0.1:8000/image/http://google.com
 
-4. You can use following parameters in the url:
+4. You can add following parameters:
 
-   * no_cache=1 -- forces the app to rebuild the image
-   * width=[int] -- forces given webview size. Note that this does not guarantee that the resulting image will be this wide.
-   * height=[int] -- same as above, but with height.
+     * width={int} -- Sets webview width to this value. If the page is wider/narrower than that, it will be zoomed out/in to the given value. Defaults to 1366px.
+     * height={int} -- Sets webview height to this value. If the page is longer than that, it will be cropped. If it's shorter, you'll get some whitespace. Defaults to 768px, but will show whole page if not set or set to 0.
