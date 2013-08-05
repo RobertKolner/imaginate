@@ -20,7 +20,7 @@ class IndexView(TemplateView):
 
         try:
             with open(image, "rb") as f:
-                return HttpResponse(f.read(), mimetype="image/jpeg")
+                return HttpResponse(f.read(), mimetype="image/png")
         except IOError: 
             raise Http404
 
@@ -52,15 +52,22 @@ class IndexView(TemplateView):
     var page = require("webpage").create();
     var url = "{url}";
    
+    var defaultWidth = 1366;
+    var defaultHeight = 786
+
     page.viewportSize = {{
-        width:  {width} > 0 ? {width} : 1366,
-        height: {height} > 0 ? {height} : 768
+        width:  {width} > 0 ? {width} : defaultWidth,
+        height: {height} > 0 ? {height} : defaultHeight
     }};
 
     page.open(url, function(status) {{
 
         var offsetWidth = page.evaluate(function() {{
             return document.body.offsetWidth;
+        }});
+
+        var offsetHeight = page.evaluate(function() {{
+            return document.body.offsetHeight;
         }});
 
         var offsetLeft = page.evaluate(function() {{
@@ -75,7 +82,7 @@ class IndexView(TemplateView):
             top: offsetTop,
             left: offsetLeft,
             width: offsetWidth,
-            height: ({height} > 0 ? {height} : 768) * (offsetWidth / ({width} > 0 ? {width} : 1366))
+            height: ({height} > 0 ? {height} : offsetHeight) * (offsetWidth / ({width} > 0 ? {width} : defaultWidth))
         }}
 
         page.render("{output}");
