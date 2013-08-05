@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.template import Context
 from django.views.generic import TemplateView
+from PIL import Image
 from urlparse import urlparse
 
 import errno
@@ -12,11 +13,10 @@ class IndexView(TemplateView):
     var_path = "/var/tmp/"
     
     def get(self, request, url):
-        no_cache = request.GET.get("no_cache") == "1"
         image_width = request.GET.get("width") or 0
         image_height = request.GET.get("height") or 0
 
-        image = self._get_image(url, no_cache=no_cache, width=int(image_width), height=int(image_height))
+        image = self._get_image(url, width=int(image_width), height=int(image_height))
 
         try:
             with open(image, "rb") as f:
@@ -51,26 +51,31 @@ class IndexView(TemplateView):
     """ 
     var page = require("webpage").create();
     var url = "{url}";
-    var targetWidth = {width};
-    var targetHeight = {height};
-    
+   
     page.viewportSize = {{
-        width: targetWidth,
-        height: targetHeight
+        width:  {width} > 0 ? {width} : 1366,
+        height: {height} > 0 ? {height} : 768
     }};
 
     page.open(url, function(status) {{
 
-        var pageWidth = page.evaluate(function() {{
-            return document.width;
+        var offsetWidth = page.evaluate(function() {{
+            return document.body.offsetWidth;
         }});
 
-        var zoomFactor = targetWidth / pageWidth;
+        var offsetLeft = page.evaluate(function() {{
+            return document.body.offsetLeft;
+        }});
+
+        var offsetTop = page.evaluate(function() {{
+            return document.body.offsetTop;
+        }});
+
         page.clipRect = {{
-            top: 0,
-            left: 0,
-            width: targetWidth / zoomFactor,
-            height: targetHeight / zoomFactor
+            top: offsetTop,
+            left: offsetLeft,
+            width: offsetWidth,
+            height: ({height} > 0 ? {height} : 768) * (offsetWidth / ({width} > 0 ? {width} : 1366))
         }}
 
         page.render("{output}");
@@ -84,14 +89,18 @@ class IndexView(TemplateView):
     
         return subprocess.check_call([self.phantomjs_path, tmp_script_path])
     
-    def _get_image(self, url, width=0, height=0, no_cache=False):
+    def _get_image(self, url, width=0, height=0):
         cachedir = self._get_cachedir()
         filename = self._get_filename(url)
         path = cachedir + filename
     
-    
-        if no_cache or not os.path.exists(path):
-            self._create_image(url, path, width, height)
+        self._create_image(url, path, width, height)
+        
+        # Resize the image if needed:
+        if width != 0 and height != 0:
+            img = Image.open(path)
+            img = img.resize((width, height), Image.ANTIALIAS)
+            img.save(path) 
     
         return path
 
