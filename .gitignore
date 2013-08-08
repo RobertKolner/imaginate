@@ -1,6 +1,6 @@
 *.pyc
 *.swp
 *~
-
-imaginate/settings.py
+/imaginate/settings.py
+/venv/
 
