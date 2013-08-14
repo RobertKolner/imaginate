@@ -11,7 +11,8 @@ class IndexView(TemplateView):
     phantomjs_path = "./imaginate/phantomjs"
     var_path = "/var/tmp/"
     
-    def get(self, request, url):
+    def get(self, request):
+        url = request.GET.get("url") or ""
         image_width = request.GET.get("width") or 0
         image_height = request.GET.get("height") or 0
 
