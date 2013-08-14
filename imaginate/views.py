@@ -16,7 +16,7 @@ class IndexView(TemplateView):
         image_width = request.GET.get("width") or 0
         image_height = request.GET.get("height") or 0
 
-        image_path = self._get_image(url, width=int(image_width), height=int(image_height))
+        image_path = self._get_image(url.strip(), width=int(image_width), height=int(image_height))
 
         try:
             with open(image_path, "rb") as f:
