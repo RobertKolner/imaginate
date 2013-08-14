@@ -1,7 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.template import Context
 from django.views.generic import TemplateView
-from PIL import Image
 from urlparse import urlparse
 
 import errno
@@ -83,11 +82,19 @@ class IndexView(TemplateView):
             return document.body.offsetTop;
         }});
 
+        var width = page.evaluate(function() {{
+            return document.width;
+        }});
+
+        var height = page.evaluate(function() {{
+            return document.height;
+        }});
+
         page.clipRect = {{
             top: offsetTop,
             left: offsetLeft,
-            width: offsetWidth,
-            height: ({height} > 0 ? {height} : offsetHeight) * (offsetWidth / ({width} > 0 ? {width} : defaultWidth))
+            width: width - offsetLeft,
+            height: (({height} > 0 ? {height} : offsetHeight) * (offsetWidth / ({width} > 0 ? {width} : defaultWidth))) - offsetTop
         }}
 
         page.render("{output}");
@@ -111,11 +118,5 @@ class IndexView(TemplateView):
     
         self._create_image(url, path, width, height)
         
-        # Resize the image if needed:
-        if width != 0 and height != 0:
-            img = Image.open(path)
-            img = img.resize((width, height), Image.ANTIALIAS)
-            img.save(path) 
-    
         return path
 

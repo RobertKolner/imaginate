@@ -19,5 +19,5 @@ Usage
 
 4. You can add following parameters:
 
-     * width={int} -- Sets webview width to this value. If the page is wider/narrower than that, it will be zoomed out/in to the given value. Defaults to 1366px.
+     * width={int} -- Sets webview width to this value. Defaults to 1366px.
      * height={int} -- Sets webview height to this value. If the page is longer than that, it will be cropped. If it's shorter, you'll get some whitespace. Defaults to 768px, but will show whole page if not set or set to 0.
