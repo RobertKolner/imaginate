@@ -5,6 +5,7 @@ from urlparse import urlparse
 
 import errno
 import os
+import settings
 import subprocess
 
 def _get_os_bit_version():
@@ -12,7 +13,7 @@ def _get_os_bit_version():
     return str(struct.calcsize("P") * 8)
 
 class IndexView(TemplateView):
-    phantomjs_path = "./imaginate/phantomjs-" +_get_os_bit_version()
+    phantomjs_path = settings.PHANTOMJS_PATH.format(bits=_get_os_bit_version())
     var_path = "/var/tmp/"
     
     def get(self, request):

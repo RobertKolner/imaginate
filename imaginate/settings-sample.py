@@ -110,6 +110,9 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+# Path to PhantomJS-binary. Is supposed to take one attribute from format - {bits} - which decides what version of phantomjs to run.
+PHANTOMJS_PATH = '' #TODO
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
