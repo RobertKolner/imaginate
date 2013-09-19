@@ -5,14 +5,10 @@ from urlparse import urlparse
 
 import errno
 import os
-import struct
 import subprocess
 
-def _get_os_bit_version():
-    return str(struct.calcsize("P") * 8)
-
 class IndexView(TemplateView):
-    phantomjs_path = "./phantomjs-" +_get_os_bit_version()
+    phantomjs_path = "phantomjs"
     var_path = "/var/tmp/"
     
     def get(self, request):
