@@ -43,7 +43,7 @@ class IndexView(TemplateView):
     
         return path
     
-    def _get_filename(self, url):
+    def _get_filename(self, url, width, height):
         if len(url) == 0:
             raise ValueError("You must provide url.")
     
@@ -53,6 +53,9 @@ class IndexView(TemplateView):
             path = path[:-1]
 
         path = path.replace('/', '_')
+
+        path += '_'+str(width)
+        path += 'x'+str(height)
 
         return "{}.png".format(path)
     
@@ -119,7 +122,7 @@ class IndexView(TemplateView):
     
     def _get_image(self, url, width=0, height=0):
         cachedir = self._get_cachedir()
-        filename = self._get_filename(url)
+        filename = self._get_filename(url, width, height)
         path = cachedir + filename
     
         self._create_image(url, path, width, height)
