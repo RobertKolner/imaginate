@@ -14,7 +14,7 @@ def _get_os_bit_version():
 
 class IndexView(TemplateView):
     phantomjs_path = settings.PHANTOMJS_PATH.format(bits=_get_os_bit_version())
-    var_path = "/var/tmp/"
+    var_path = settings.CACHEDIR_PATH
     
     def get(self, request):
         url = request.GET.get("url") or ""
@@ -33,7 +33,7 @@ class IndexView(TemplateView):
             raise Http404
 
     def _get_cachedir(self):
-        path = self.var_path + "imaginate/"
+        path = self.var_path
     
         try:
             os.makedirs(path)

@@ -112,6 +112,7 @@ TEMPLATE_DIRS = (
 
 # Path to PhantomJS-binary. Is supposed to take one attribute from format - {bits} - which decides what version of phantomjs to run.
 PHANTOMJS_PATH = '' #TODO
+CACHEDIR_PATH = '/var/tmp/imaginate'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
