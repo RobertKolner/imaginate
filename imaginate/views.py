@@ -61,17 +61,19 @@ class IndexView(TemplateView):
         return "{}.png".format(path)
     
     def _create_image(self, url, output_path, width, height):
+        if width == 0: 
+            width = 1366
+        if height == 0:
+            height = 768
+
         script = \
     """ 
     var page = require("webpage").create();
     var url = "{url}";
    
-    var defaultWidth = 1366;
-    var defaultHeight = 786
-
     page.viewportSize = {{
-        width:  {width} > 0 ? {width} : defaultWidth,
-        height: {height} > 0 ? {height} : defaultHeight
+        width:  {width},
+        height: {height},
     }};
 
     page.open(url, function(status) {{
@@ -104,7 +106,7 @@ class IndexView(TemplateView):
             top: offsetTop,
             left: offsetLeft,
             width: width - offsetLeft,
-            height: (({height} > 0 ? {height} : offsetHeight) * (offsetWidth / ({width} > 0 ? {width} : defaultWidth))) - offsetTop
+            height: Math.round(({height} * (width / {width})) - offsetTop)
         }}
 
         page.render("{output}");
