@@ -8,6 +8,7 @@ import errno
 import os
 import settings
 import subprocess
+import uuid
 
 def _get_os_bit_version():
     import struct
@@ -110,7 +111,7 @@ class IndexView(TemplateView):
         phantom.exit();
     }});
     """.format(url=url, output=output_path, width=width, height=height)
-        tmp_script_path = self._get_cachedir() + 'script.js'
+        tmp_script_path = self._get_cachedir() + 'script_{}.js'.format(str(uuid.uuid4().hex))
         tmp_script = open(tmp_script_path, 'w')
         tmp_script.write(script)
         tmp_script.close()
