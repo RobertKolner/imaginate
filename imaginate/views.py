@@ -110,7 +110,7 @@ class IndexView(TemplateView):
         phantom.exit();
     }});
     """.format(url=url, output=output_path, width=width, height=height)
-        tmp_script_path = self._get_cachedir() + 'script_{url}_{width}x{height}.js'.format(url=url[7:], width=str(width), height=str(height)).replace(":/", "_")
+        tmp_script_path = self._get_cachedir() + 'script.js'
         tmp_script = open(tmp_script_path, 'w')
         tmp_script.write(script)
         tmp_script.close()
