@@ -117,7 +117,10 @@ class IndexView(TemplateView):
 
         retval = subprocess.check_call([self.phantomjs_path, tmp_script_path])
 
-        os.remove(tmp_script_path)
+        try:
+            os.remove(tmp_script_path)
+        except IOError:
+            return 1 # This has failed!
         return retval
     
     def _get_image(self, url, width=0, height=0):
@@ -144,7 +147,9 @@ class CacheView(TemplateView):
 
                 fileage = int(now - mtime)      # current file age in seconds.
                 if fileage > 60 * 60 * 24 * 30:     # a month
-                    os.remove(path)
-                    
+                    try:
+                        os.remove(path)
+                    except IOError:
+                        pass # Good.
 
         return HttpResponse("")
