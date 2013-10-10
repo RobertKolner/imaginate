@@ -2,6 +2,7 @@ from django.http import HttpResponse, Http404
 from django.template import Context
 from django.views.generic import TemplateView
 from urlparse import urlparse
+from time import time
 
 import errno
 import os
@@ -27,7 +28,6 @@ class IndexView(TemplateView):
             with open(image_path, "rb") as f:
                 data = f.read()
 
-            os.remove(image_path)
             return HttpResponse(data, mimetype="image/png")
         except IOError: 
             raise Http404
@@ -125,7 +125,26 @@ class IndexView(TemplateView):
         filename = self._get_filename(url, width, height)
         path = cachedir + filename
     
-        self._create_image(url, path, width, height)
+        if not os.path.exists(path):
+            self._create_image(url, path, width, height)
         
         return path
 
+class CacheView(TemplateView):
+    var_path = settings.CACHEDIR_PATH
+
+    def get(self, request):
+        invalidate = request.GET.get("invalidate") in ("true", "True", "1")
+
+        for (dirpath, dirnames, filenames) in os.walk(self.var_path):
+            for filename in filenames:
+                path = dirpath + filename
+                mtime = os.path.getmtime(path)
+                now = time()
+
+                fileage = int(now - mtime)      # current file age in seconds.
+                if fileage > 60 * 60 * 24 * 30:     # a month
+                    os.remove(path)
+                    
+
+        return HttpResponse("")

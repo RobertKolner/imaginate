@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
-from views import IndexView
+from views import IndexView, CacheView
 
 urlpatterns = patterns('',
     url(r'^image/$', IndexView.as_view(), name='home'),
+    url(r'^cache/$', CacheView.as_view(), name='cache'),
 )
