@@ -18,8 +18,8 @@ class IndexView(TemplateView):
     phantomjs_path = settings.PHANTOMJS_PATH.format(bits=_get_os_bit_version())
     var_path = settings.CACHEDIR_PATH
     
-    def get(self, request):
-        url = request.GET.get("url") or ""
+    def get(self, request, url=None):
+        url = url or request.GET.get("url") or ""
         image_width = request.GET.get("width") or 0
         image_height = request.GET.get("height") or 0
 
@@ -60,7 +60,7 @@ class IndexView(TemplateView):
 
         return "{}.png".format(path)
     
-    def _create_image(self, url, output_path, width, height):
+    def _create_image(self, url, output_path, width=0, height=0):
         if width == 0: 
             width = 1366
         if height == 0:
