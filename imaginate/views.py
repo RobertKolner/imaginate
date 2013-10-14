@@ -137,6 +137,7 @@ class IndexView(TemplateView):
         return path
 
 class CacheView(TemplateView):
+    # TODO: This whole system should use a database instead of files.
     var_path = settings.CACHEDIR_PATH
 
     def get(self, request):
