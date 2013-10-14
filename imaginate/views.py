@@ -145,11 +145,11 @@ class CacheView(TemplateView):
         for (dirpath, dirnames, filenames) in os.walk(self.var_path):
             for filename in filenames:
                 path = dirpath + filename
-                mtime = os.path.getmtime(path)
+                mtime = os.path.getatime(path)
                 now = time()
 
                 fileage = int(now - mtime)      # current file age in seconds.
-                if fileage > 60 * 60 * 24 * 30:     # a month
+                if fileage > 60 * 60 * 24:      # a day
                     try:
                         os.remove(path)
                     except IOError:
