@@ -77,6 +77,7 @@ class IndexView(TemplateView):
     }};
 
     page.open(url, function(status) {{
+        page.onConsoleMessage = function (msg) {{ console.log(msg); }};
 
         var offsetWidth = page.evaluate(function() {{
             return document.body.offsetWidth;
@@ -102,8 +103,25 @@ class IndexView(TemplateView):
             return document.height;
         }});
 
+        // Scroll to content:
+        var contentStartHeight = page.evaluate(function() {{
+            var contentSelectors = [
+                "#header", ".header", "#content", ".content", "#main", ".post", "#post"
+            ]
+            
+            for (i in contentSelectors) {{
+                var el = document.querySelector(contentSelectors[i]);
+                var top = el ? el.offsetTop : 0;
+
+                if (top) {{
+                    return top;
+                }}
+            }}
+            return 0;
+        }});
+
         page.clipRect = {{
-            top: offsetTop,
+            top: contentStartHeight > 0 ? contentStartHeight : offsetTop,
             left: offsetLeft,
             width: width - offsetLeft,
             height: Math.round(({height} * (width / {width})) - offsetTop)
