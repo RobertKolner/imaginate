@@ -118,7 +118,16 @@ class IndexView(TemplateView):
         tmp_script.write(script)
         tmp_script.close()
 
-        retval = subprocess.check_call([self.phantomjs_path, tmp_script_path])
+        runpath = [
+            self.phantomjs_path,
+            "--cookies-file={}".format(self._get_cachedir()+"cookies.dat"),
+            "--disk-cache=true",
+            "--local-storage-path={}".format(self._get_cachedir()),
+            "--ignore-ssl-errors=true",
+            tmp_script_path,
+        ]
+
+        retval = subprocess.check_call(runpath)
 
         try:
             os.remove(tmp_script_path)
