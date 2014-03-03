@@ -8,11 +8,36 @@ import errno
 import os
 import settings
 import subprocess
+import threading
 import uuid
 
 def _get_os_bit_version():
     import struct
     return str(struct.calcsize("P") * 8)
+
+class Command(object):
+    def __init__(self, command):
+        self.command = command
+        self.process = None
+        self.retval = None
+
+    def run(self, timeout=0):
+        # TODO: Spawn a new thread that runs the process
+        def target():
+            self.retval = subprocess.check_call(self.command)
+            return self.retval
+
+        if timeout <= 0:
+            return target()
+
+        thread = threading.Thread(target=target)
+        thread.start()
+        thread.join(timeout)
+        if thread.is_alive():
+            self.process.terminate()
+            thread.join()
+
+        return self.retval
 
 class IndexView(TemplateView):
     phantomjs_path = settings.PHANTOMJS_PATH.format(bits=_get_os_bit_version())
@@ -145,7 +170,8 @@ class IndexView(TemplateView):
             tmp_script_path,
         ]
 
-        retval = subprocess.check_call(runpath)
+        cmd = Command(runpath)
+        retval = cmd.run(5) # time out after 5 seconds
 
         try:
             os.remove(tmp_script_path)
