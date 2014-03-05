@@ -22,7 +22,6 @@ class Command(object):
         self.retval = None
 
     def run(self, timeout=0):
-        # TODO: Spawn a new thread that runs the process
         def target():
             self.retval = subprocess.check_call(self.command)
             return self.retval
@@ -91,6 +90,7 @@ class IndexView(TemplateView):
         if height == 0:
             height = 768
 
+        #TODO: Hi, have you seen templates?
         script = \
     """ 
     var page = require("webpage").create();
@@ -163,7 +163,6 @@ class IndexView(TemplateView):
 
         runpath = [
             self.phantomjs_path,
-            "--cookies-file={}".format(self._get_cachedir()+"cookies.dat"),
             "--disk-cache=true",
             "--local-storage-path={}".format(self._get_cachedir()),
             "--ignore-ssl-errors=true",
