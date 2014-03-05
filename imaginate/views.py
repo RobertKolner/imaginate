@@ -203,7 +203,7 @@ class CacheView(TemplateView):
                 now = time()
 
                 fileage = int(now - mtime)      # current file age in seconds.
-                if fileage > 60 * 60:           # an hour
+                if fileage > 60 * 60 * 4:       # four hours
                     try:
                         os.remove(path)
                     except IOError:
