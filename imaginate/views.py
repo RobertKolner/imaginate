@@ -5,11 +5,14 @@ from urlparse import urlparse
 from time import time
 
 import errno
+import logging
 import os
 import settings
 import subprocess
 import threading
 import uuid
+
+logger = logging.getLogger(__name__)
 
 def _get_os_bit_version():
     import struct
@@ -169,13 +172,20 @@ class IndexView(TemplateView):
             tmp_script_path,
         ]
 
+        logger.debug("Starting phantomjs.")
         cmd = Command(runpath)
         retval = cmd.run(5) # time out after 5 seconds
+        logger.debug("Finished phantomjs.")
+        if retval != 0:
+            logger.error("phantomjs failed with code {}".format(retval))
 
         try:
+            logger.debug("Deleting file: {}".format(tmp_script_path))
             os.remove(tmp_script_path)
-        except IOError:
+        except IOError as e:
+            logger.warning("Cannot delete {}: {}".format(tmp_script_path, str(e)))
             return 1 # This has failed!
+
         return retval
     
     def _get_image(self, url, width=0, height=0):
